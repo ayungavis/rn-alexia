@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, Image, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, View, TouchableOpacity, StatusBar } from 'react-native';
 import { Container, Text } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import fonts from 'res/fonts';
 import strings from 'res/strings';
@@ -10,18 +11,20 @@ import images from 'res/images';
 
 export default class WelcomeScreen extends Component {
 	render() {
+		const { navigate } = this.props.navigation
 		return (
 			<Container style={styles.container}>
+				<StatusBar backgroundColor={'transparent'} barStyle="dark-content" translucent={true} />
 				<Image 
 					style={styles.image}
 					source={images.welcome} 
 				/>
-				<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+				<View style={{ flex: 2, justifyContent: 'center', alignItems: 'center' }}>
 					<Text style={styles.title}>{strings.onboarding.welcome.title}</Text>
 				</View>
-				<View styles={{ flex: 1, justifyContent: 'center' }}>
-					<TouchableOpacity style={styles.button}>
-						<Text style={styles.text}>{strings.onboarding.welcome.button}</Text>
+				<View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+					<TouchableOpacity style={styles.button} onPress={() => navigate('Shop')}>
+						<Icon name="ios-cart" size={15} color="white" /><Text>  </Text><Text style={styles.text}>{strings.onboarding.welcome.button}</Text>
 					</TouchableOpacity>
 				</View>
 			</Container>
@@ -35,9 +38,9 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		flex: 1,
-		position: 'absolute',
 		width: wp('100%'),
 		height: hp('100%'),
+		position: 'absolute',
 		resizeMode: 'stretch'
 	},
 	title: {
@@ -45,20 +48,21 @@ const styles = StyleSheet.create({
 		fontSize: hp('6%'),
 		color: colors.primary,
 		letterSpacing: 10,
-		marginBottom: 100
+		marginTop: 100
 	},
 	button: {
 		backgroundColor: colors.primary,
 		borderRadius: 50,
 		width: wp('80%'),
 		height: hp('7.5%'),
-		marginBottom: 40,
+		marginBottom: 35,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	text: {
 		fontFamily: fonts.regular,
 		fontSize: hp('2.5%'),
 		color: 'white',
-	}
+	},
 })

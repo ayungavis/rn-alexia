@@ -1,0 +1,7 @@
+dummy = [
+	{
+		name: '',
+		description: '',
+		price: ''
+	}
+]
