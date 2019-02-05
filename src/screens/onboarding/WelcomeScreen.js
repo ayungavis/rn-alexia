@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
 	button: {
 		backgroundColor: colors.primary,
 		borderRadius: 50,
-		width: wp('80%'),
-		height: hp('7.5%'),
+		width: wp('75%'),
+		height: hp('7%'),
 		marginBottom: 35,
 		justifyContent: 'center',
 		alignItems: 'center',

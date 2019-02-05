@@ -2,6 +2,11 @@ dummy = [
 	{
 		name: '',
 		description: '',
-		price: ''
+		category: 'Designer Collection',
+		price: '',
+		rating: '',
+		star: '',
+		review: '',
+		image: require('./images/products/1.png'),
 	}
 ]
