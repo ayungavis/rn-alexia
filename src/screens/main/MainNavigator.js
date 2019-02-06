@@ -7,6 +7,7 @@ import ShopScreen from './ShopScreen';
 import ExploreScreen from './ExploreScreen';
 import SavedScreen from './SavedScreen';
 import ProfileScreen from './ProfileScreen';
+import DetailScreen from './DetailScreen';
 
 import colors from 'res/colors';
 
@@ -51,7 +52,8 @@ const MainNavigator = createStackNavigator({
 		navigationOptions: {
 			header: null
 		}
-	}	
+	},
+	Detail: { screen: DetailScreen }
 }, {
 	headerMode: 'none'
 })

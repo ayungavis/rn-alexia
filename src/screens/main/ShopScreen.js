@@ -5,14 +5,26 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/Ionicons';
 import Slideshow from 'react-native-slideshow';
 
+import ListCollection from 'library/listCollection';
+
 import fonts from 'res/fonts';
 import strings from 'res/strings';
 import colors from 'res/colors';
 import images from 'res/images';
 
+import 'res/data/products';
+import 'res/data/wishlist';
+
 export default class ShopScreen extends Component {
 	constructor(props) {
 		super(props);
+		this.productDetail = (id, name, lowname, description, category_id, price, ratings, rating_one, rating_two, rating_three, rating_four, rating_five, review, newproduct, collection, top, wishlist, cart, stock, thumbnail, image_one, image_two, image_three, image_four) => () => {
+			this.props.navigation.navigate('Detail', { id, name, lowname, description, category_id, price, ratings, rating_one, rating_two, rating_three, rating_four, rating_five, review, newproduct, collection, top, wishlist, cart, stock, thumbnail, image_one, image_two, image_three, image_four });
+		},
+		this.addToWishlist = (id) => () => {
+			this.setState({wishlist: 1})
+			wishlist.push(id)
+		},
 		this.state = {
 			position: 1,
 			interval: null,
@@ -36,8 +48,9 @@ export default class ShopScreen extends Component {
 					screen: '',
 					url: require('res/images/slider-three.png'),
 				},
-
 			],
+			products: products,
+			wishlist: wishlist
 		}
 	}
 
@@ -74,82 +87,39 @@ export default class ShopScreen extends Component {
 						</TouchableOpacity>
 					</View>
 					<View style={styles.upperCatalogueContainerLayout}>
-						<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-							<TouchableOpacity>
-								<View style={styles.upperCatalogueContainer}>
-									<ImageBackground style={styles.upperCatalogueImage} source={images.products.one}>
-										<View style={styles.upperCatalogueBadgeLayout}>
-											<TouchableOpacity style={styles.upperCatalogueBadge}>
-												<Icon name='ios-heart' size={10} color={colors.love} />
-											</TouchableOpacity>
-										</View>
-										<View style={styles.upperCatalogueLabelLayout}>
-											<View style={styles.upperCatalogueLabel}>
-												<Text style={styles.upperCatalogueLabelText}>NEW</Text>
+						<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>							
+							<FlatList
+								horizontal={true}
+								data={this.state.products}
+								keyExtractor={(item, index) => index.toString()}
+								renderItem={({item, index}) => (
+									<View>
+									{item.collection == 1 ?
+										<TouchableOpacity onPress={this.productDetail(item.id, item.name, item.lowname, item.description, item.category_id, item.price, item.ratings, item.rating_one, item.rating_two, item.rating_three, item.rating_four, item.rating_five, item.review, item.new, item.collection, item.top, item.wishlist, item.cart, item.stock, item.thumbnail, item.image_one, item.image_two, item.image_thre, item.image_four)}>
+											<View style={styles.upperCatalogueContainer}>
+												<ImageBackground style={styles.upperCatalogueImage} source={item.images.thumbnail}>
+													<View style={styles.upperCatalogueBadgeLayout}>
+														<TouchableOpacity style={styles.upperCatalogueBadge} onPress={this.addToWishlist(item.id)}>
+															{item.wishlist ? <Icon name='ios-heart' size={10} color={colors.love} /> : <Icon name='ios-heart' size={10} color={colors.grey} /> }
+														</TouchableOpacity>
+													</View>
+													{item.new ?
+														<View style={styles.upperCatalogueLabelLayout}>
+															<View style={styles.upperCatalogueLabel}>
+																<Text style={styles.upperCatalogueLabelText}>NEW</Text>
+															</View>
+														</View>
+														: <View></View>
+													}
+												</ImageBackground>
+												<Text style={styles.upperCatalogueTitle}>{item.lowname}</Text>
+												<Text style={styles.upperCataloguePrice}>${item.price}</Text>
 											</View>
-										</View>
-									</ImageBackground>
-									<Text style={styles.upperCatalogueTitle}>Main Title</Text>
-									<Text style={styles.upperCataloguePrice}>$44.99</Text>
-								</View>
-							</TouchableOpacity>
-							<TouchableOpacity>
-								<View style={styles.upperCatalogueContainer}>
-									<ImageBackground style={styles.upperCatalogueImage} source={images.products.two}>
-										<View style={styles.upperCatalogueBadgeLayout}>
-											<TouchableOpacity style={styles.upperCatalogueBadge}>
-													<Icon name='ios-heart' size={10} color={colors.grey} />
-											</TouchableOpacity>
-										</View>
-									</ImageBackground>
-									<Text style={styles.upperCatalogueTitle}>Berrybenka Label</Text>
-									<Text style={styles.upperCataloguePrice}>$39.99</Text>
-								</View>
-							</TouchableOpacity>
-							<TouchableOpacity>
-								<View style={styles.upperCatalogueContainer}>
-									<ImageBackground style={styles.upperCatalogueImage} source={images.products.three}>
-										<View style={styles.upperCatalogueBadgeLayout}>
-											<TouchableOpacity style={styles.upperCatalogueBadge}>
-													<Icon name='ios-heart' size={10} color={colors.love} />
-											</TouchableOpacity>
-										</View>
-									</ImageBackground>
-									<Text style={styles.upperCatalogueTitle}>Callie Cotton</Text>
-									<Text style={styles.upperCataloguePrice}>$29.99</Text>
-								</View>
-							</TouchableOpacity>
-							<TouchableOpacity>
-								<View style={styles.upperCatalogueContainer}>
-									<ImageBackground style={styles.upperCatalogueImage} source={images.products.four}>
-										<View style={styles.upperCatalogueBadgeLayout}>
-											<TouchableOpacity style={styles.upperCatalogueBadge}>
-													<Icon name='ios-heart' size={10} color={colors.love} />
-											</TouchableOpacity>
-										</View>
-										<View style={styles.upperCatalogueLabelLayout}>
-											<View style={styles.upperCatalogueLabel}>
-												<Text style={styles.upperCatalogueLabelText}>NEW</Text>
-											</View>
-										</View>
-									</ImageBackground>
-									<Text style={styles.upperCatalogueTitle}>Lovadova Girl</Text>
-									<Text style={styles.upperCataloguePrice}>$44.99</Text>
-								</View>
-							</TouchableOpacity>
-							<TouchableOpacity>
-								<View style={styles.upperCatalogueContainer}>
-									<ImageBackground style={styles.upperCatalogueImage} source={images.products.five}>
-										<View style={styles.upperCatalogueBadgeLayout}>
-											<TouchableOpacity style={styles.upperCatalogueBadge}>
-													<Icon name='ios-heart' size={10} color={colors.grey} />
-											</TouchableOpacity>
-										</View>
-									</ImageBackground>
-									<Text style={styles.upperCatalogueTitle}>Atom Dress</Text>
-									<Text style={styles.upperCataloguePrice}>$59.99</Text>
-								</View>
-							</TouchableOpacity>
+										</TouchableOpacity> : <View></View>
+									}
+									</View>
+								)} 
+							/>
 						</ScrollView>
 					</View>
 					<View style={styles.lowerCatalogueHeader}>
@@ -160,93 +130,46 @@ export default class ShopScreen extends Component {
 					</View>
 					<View style={styles.lowerCatalogueContainerLayout}>
 						<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-							<View style={styles.lowerCatalogueContainerBig}>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.one} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Mid Rise Jeggings</Text>
-											<Text style={styles.lowerCataloguePrice}>$49.99</Text>
-										</View>
+							<FlatList
+								horizontal={true}
+								data={this.state.products}
+								keyExtractor={(item, index) => index.toString()}
+								renderItem={({item, index}) => (
+									<View>
+										{item.top == 1 ?
+											<View style={styles.lowerCatalogueContainerBig}>
+												<TouchableOpacity>
+													<View style={styles.lowerCatalogueContainerSmall}>
+														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+														<View style={styles.lowerCatalogueTitleLayout}>
+															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+														</View>
+													</View>
+												</TouchableOpacity>
+												<TouchableOpacity>
+													<View style={styles.lowerCatalogueContainerSmall}>
+														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+														<View style={styles.lowerCatalogueTitleLayout}>
+															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+														</View>
+													</View>
+												</TouchableOpacity>
+												<TouchableOpacity>
+													<View style={styles.lowerCatalogueContainerSmall}>
+														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+														<View style={styles.lowerCatalogueTitleLayout}>
+															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+														</View>
+													</View>
+												</TouchableOpacity>
+											</View> : <View></View>
+										}
 									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.two} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Lawless Highwed</Text>
-											<Text style={styles.lowerCataloguePrice}>$39.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.three} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Knee Embroidery</Text>
-											<Text style={styles.lowerCataloguePrice}>$29.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-							</View>
-							<View style={styles.lowerCatalogueContainerBig}>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.four} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Vice High Waisted</Text>
-											<Text style={styles.lowerCataloguePrice}>$24.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.five} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Karly Long Sleeve</Text>
-											<Text style={styles.lowerCataloguePrice}>$34.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.six} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Rebecca Shirt</Text>
-											<Text style={styles.lowerCataloguePrice}>$39.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-							</View>
-							<View style={styles.lowerCatalogueContainerBig}>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.seven} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Bet Mock Neck Rib</Text>
-											<Text style={styles.lowerCataloguePrice}>$48.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.eight} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>Nadine Zip Front</Text>
-											<Text style={styles.lowerCataloguePrice}>$35.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-								<TouchableOpacity>
-									<View style={styles.lowerCatalogueContainerSmall}>
-										<Image style={styles.lowerCatalogueImage} source={images.products.nine} />
-										<View style={styles.lowerCatalogueTitleLayout}>
-											<Text style={styles.lowerCatalogueTitle}>The One Boyfriend</Text>
-											<Text style={styles.lowerCataloguePrice}>$24.99</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-							</View>
+								)}
+							/>
 						</ScrollView>
 					</View>
 					<View style={styles.limit}>
