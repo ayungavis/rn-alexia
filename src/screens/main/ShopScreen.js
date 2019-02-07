@@ -18,9 +18,9 @@ import 'res/data/wishlist';
 export default class ShopScreen extends Component {
 	constructor(props) {
 		super(props);
-		this.productDetail = (id, name, lowname, description, category_id, price, ratings, rating_one, rating_two, rating_three, rating_four, rating_five, review, newproduct, collection, top, wishlist, cart, stock, thumbnail, image_one, image_two, image_three, image_four) => () => {
+		/*this.productDetail = (id, name, lowname, description, category_id, price, ratings, rating_one, rating_two, rating_three, rating_four, rating_five, review, newproduct, collection, top, wishlist, cart, stock, thumbnail, image_one, image_two, image_three, image_four) => () => {
 			this.props.navigation.navigate('Detail', { id, name, lowname, description, category_id, price, ratings, rating_one, rating_two, rating_three, rating_four, rating_five, review, newproduct, collection, top, wishlist, cart, stock, thumbnail, image_one, image_two, image_three, image_four });
-		},
+		},*/
 		this.addToWishlist = (id) => () => {
 			this.setState({wishlist: 1})
 			wishlist.push(id)
@@ -50,7 +50,7 @@ export default class ShopScreen extends Component {
 				},
 			],
 			products: products,
-			wishlist: wishlist
+			wishlists: wishlist
 		}
 	}
 
@@ -69,6 +69,9 @@ export default class ShopScreen extends Component {
 	}
 
 	render() {
+		var arrays = []
+		while(this.state.products.top == 1)
+			arrays.push(this.state.products)
 		return(
 			<Container style={styles.container}>
 				<ScrollView showsVerticalScrollIndicator={false}>				
@@ -91,32 +94,33 @@ export default class ShopScreen extends Component {
 							<FlatList
 								horizontal={true}
 								data={this.state.products}
+								extraData={this.state}
 								keyExtractor={(item, index) => index.toString()}
 								renderItem={({item, index}) => (
 									<View>
-									{item.collection == 1 ?
-										<TouchableOpacity onPress={this.productDetail(item.id, item.name, item.lowname, item.description, item.category_id, item.price, item.ratings, item.rating_one, item.rating_two, item.rating_three, item.rating_four, item.rating_five, item.review, item.new, item.collection, item.top, item.wishlist, item.cart, item.stock, item.thumbnail, item.image_one, item.image_two, item.image_thre, item.image_four)}>
-											<View style={styles.upperCatalogueContainer}>
-												<ImageBackground style={styles.upperCatalogueImage} source={item.images.thumbnail}>
-													<View style={styles.upperCatalogueBadgeLayout}>
-														<TouchableOpacity style={styles.upperCatalogueBadge} onPress={this.addToWishlist(item.id)}>
-															{item.wishlist ? <Icon name='ios-heart' size={10} color={colors.love} /> : <Icon name='ios-heart' size={10} color={colors.grey} /> }
-														</TouchableOpacity>
-													</View>
-													{item.new ?
-														<View style={styles.upperCatalogueLabelLayout}>
-															<View style={styles.upperCatalogueLabel}>
-																<Text style={styles.upperCatalogueLabelText}>NEW</Text>
-															</View>
+										{item.collection == 1 ? 
+											<TouchableOpacity onPress={() => this.props.navigation.navigate('Detail', {item})}>
+												<View style={styles.upperCatalogueContainer}>
+													<ImageBackground style={styles.upperCatalogueImage} source={item.images.thumbnail}>
+														<View style={styles.upperCatalogueBadgeLayout}>
+															<TouchableOpacity style={styles.upperCatalogueBadge} onPress={this.addToWishlist(item.id)}>
+																{item.wishlist ? <Icon name='ios-heart' size={10} color={colors.love} /> : <Icon name='ios-heart' size={10} color={colors.grey} /> }
+															</TouchableOpacity>
 														</View>
-														: <View></View>
-													}
-												</ImageBackground>
-												<Text style={styles.upperCatalogueTitle}>{item.lowname}</Text>
-												<Text style={styles.upperCataloguePrice}>${item.price}</Text>
-											</View>
-										</TouchableOpacity> : <View></View>
-									}
+														{item.new ?
+															<View style={styles.upperCatalogueLabelLayout}>
+																<View style={styles.upperCatalogueLabel}>
+																	<Text style={styles.upperCatalogueLabelText}>NEW</Text>
+																</View>
+															</View>
+															: <View></View>
+														}
+													</ImageBackground>
+													<Text style={styles.upperCatalogueTitle}>{item.lowname}</Text>
+													<Text style={styles.upperCataloguePrice}>${item.price}</Text>
+												</View>
+											</TouchableOpacity> : <View></View>
+										}
 									</View>
 								)} 
 							/>
@@ -131,43 +135,53 @@ export default class ShopScreen extends Component {
 					<View style={styles.lowerCatalogueContainerLayout}>
 						<ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 							<FlatList
-								horizontal={true}
+							numColumns={4}
 								data={this.state.products}
+								extraData={this.state}
 								keyExtractor={(item, index) => index.toString()}
 								renderItem={({item, index}) => (
 									<View>
 										{item.top == 1 ?
-											<View style={styles.lowerCatalogueContainerBig}>
-												<TouchableOpacity>
-													<View style={styles.lowerCatalogueContainerSmall}>
-														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
-														<View style={styles.lowerCatalogueTitleLayout}>
-															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
-															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
-														</View>
+											<TouchableOpacity onPress={() => this.props.navigation.navigate('Detail', {item})}>
+												<View style={styles.lowerCatalogueContainerSmall}>
+													<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+													<View style={styles.lowerCatalogueTitleLayout}>
+														<Text style={styles.lowerCatalogueTitle}>{item.lowname}</Text>
+														<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
 													</View>
-												</TouchableOpacity>
-												<TouchableOpacity>
-													<View style={styles.lowerCatalogueContainerSmall}>
-														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
-														<View style={styles.lowerCatalogueTitleLayout}>
-															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
-															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
-														</View>
-													</View>
-												</TouchableOpacity>
-												<TouchableOpacity>
-													<View style={styles.lowerCatalogueContainerSmall}>
-														<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
-														<View style={styles.lowerCatalogueTitleLayout}>
-															<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
-															<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
-														</View>
-													</View>
-												</TouchableOpacity>
-											</View> : <View></View>
+												</View>
+											</TouchableOpacity> : null
 										}
 									</View>
+									/*<View style={styles.lowerCatalogueContainerBig}>
+										<TouchableOpacity>
+											<View style={styles.lowerCatalogueContainerSmall}>
+												<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+												<View style={styles.lowerCatalogueTitleLayout}>
+													<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+													<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+												</View>
+											</View>
+										</TouchableOpacity>
+										<TouchableOpacity>
+											<View style={styles.lowerCatalogueContainerSmall}>
+												<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+												<View style={styles.lowerCatalogueTitleLayout}>
+													<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+													<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+												</View>
+											</View>
+										</TouchableOpacity> 
+										<TouchableOpacity>
+											<View style={styles.lowerCatalogueContainerSmall}>
+												<Image style={styles.lowerCatalogueImage} source={item.images.thumbnail} />
+												<View style={styles.lowerCatalogueTitleLayout}>
+													<Text style={styles.lowerCatalogueTitle}>{item.name}</Text>
+													<Text style={styles.lowerCataloguePrice}>${item.price}</Text>
+												</View>
+											</View>
+										</TouchableOpacity>
+									</View>*/
 								)}
 							/>
 						</ScrollView>
@@ -302,6 +316,8 @@ const styles = StyleSheet.create({
 		width: wp('50%'), 
 		height: hp('10%'), 
 		backgroundColor: 'transparent', 
+		marginBottom: 10,
+		marginRight: 10,
 	},
 	lowerCatalogueImage: {
 		width: 50,
@@ -312,16 +328,21 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'flex-start',
-		marginLeft: 8,
+		paddingHorizontal: 8
 	},
 	lowerCatalogueTitle: {
 		fontFamily: fonts.bold,
 		fontSize: hp('2.5%'),
-		color: colors.primary
+		color: colors.primary,
 	},
 	lowerCataloguePrice: {
 		fontFamily: fonts.regular,
 		fontSize: hp('2%'),
 		color: colors.primary
+	},
+	limit: {
+		flexDirection: 'row',
+		marginTop: 10,
+		marginRight: 10
 	}
 })

@@ -8,6 +8,7 @@ import ExploreScreen from './ExploreScreen';
 import SavedScreen from './SavedScreen';
 import ProfileScreen from './ProfileScreen';
 import DetailScreen from './DetailScreen';
+import CartScreen from './CartScreen';
 
 import colors from 'res/colors';
 
@@ -53,7 +54,8 @@ const MainNavigator = createStackNavigator({
 			header: null
 		}
 	},
-	Detail: { screen: DetailScreen }
+	Detail: { screen: DetailScreen },
+	Cart: { screen: CartScreen }
 }, {
 	headerMode: 'none'
 })

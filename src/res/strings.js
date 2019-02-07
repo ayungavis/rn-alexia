@@ -15,7 +15,13 @@ const strings = {
 				title: 'Top Trends',
 				more: 'Show All',
 			}
-		}
+		},
+		addcart: 'Add to Bag'
+	},
+	cart: {
+		title: 'My Bag',
+		checkout: 'Checkout',
+		total: 'Total Amount'
 	}
 }
 
