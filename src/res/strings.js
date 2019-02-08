@@ -22,6 +22,14 @@ const strings = {
 		title: 'My Bag',
 		checkout: 'Checkout',
 		total: 'Total Amount'
+	},
+	payment: {
+		title: 'Checkout',
+		step: {
+			shipping: 'Shipping',
+			payment: 'Payment',
+			invoice: 'Confirmation'
+		}
 	}
 }
 

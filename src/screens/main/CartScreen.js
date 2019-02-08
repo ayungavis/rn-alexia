@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar, FlatList, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar, Image } from 'react-native';
 import { Container, Text } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { FlatList, RectButton } from 'react-native-gesture-handler';
 
+import AppleStyleSwipeableRow from 'library/appleStyleSwipeableRow';
 import Header from 'library/header';
 
 import fonts from 'res/fonts';
@@ -13,24 +15,89 @@ import images from 'res/images';
 
 import 'res/data/cart';
 
+class Row extends Component {
+	render() {
+		return(
+			<View>
+				<View style={styles.cartContainer}>
+					<View style={styles.leftContent}>
+						<Image style={styles.image} source={this.props.item.images.thumbnail} />
+						<View style={styles.textLayout}>
+							<Text style={styles.title}>{this.props.item.name}</Text>
+							<Text style={styles.price}>${this.props.item.price}</Text>
+							{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
+						</View>
+					</View>
+					<View style={styles.rightContent}>
+						<View style={styles.picker}>
+							<TouchableOpacity onPress={() => (this.downQty(this.props.item, this.props.index))}>
+								<FontAwesome5 name="minus" size={10} color={colors.primary} />		
+							</TouchableOpacity>
+							<Text style={styles.pickerText}>{this.props.item.qty}</Text>
+							<TouchableOpacity onPress={() => (this.upQty(this.props.item, this.props.index))}>
+								<FontAwesome5 name="plus" size={10} color={colors.primary} />		
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+				<View style={styles.line} opacity={0.5}></View>
+			</View>
+		)
+	}
+}
+
+const SwipeableRow = ({ item, index }) => {
+	return(
+		<AppleStyleSwipeableRow>
+			<Row item={item} index={index} />
+		</AppleStyleSwipeableRow>
+	)
+}
+
 export default class CartScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			item: cart
+			carts: cart
 		}
 	}
 
+	downQty = (item, index) => {
+		const { carts } = this.state;
+		if(carts[index].qty == 1)  {
+			carts[index].qty = 1
+		}
+		else {
+			cart[index].qty -= 1
+		}
+		this.setState({ cart })
+	}
+
+	upQty = (item, index) => {
+		const { carts } = this.state;
+		if (carts[index].qty == 9) {
+			carts[index].qty = 9
+		}
+		else {
+			carts[index].qty += 1	
+		}
+		this.setState({ carts })
+	}
+
 	render() {
+		console.disableYellowBox = true;
 		let totalPrice = 0
-		cart.forEach((item) => {
-			totalPrice = totalPrice + item.price
-		})
+		this.state.carts.forEach((item) => {
+			totalPrice += item.qty * item.price
+ 		})
 
 		return(
 			<Container style={styles.container}>
 				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={false} />
 				<View style={styles.top}>
+					<Header leftIcon="chevron-left" navigation={this.props.navigation} title={strings.cart.title} rightIcon="ellipsis-h" />
+				</View>
+				<View style={styles.middle}>
 					<ScrollView showsVerticalScrollIndicator={false}>
 						{/*<View style={styles.header}>
 							<View style={styles.headerLeft}></View>
@@ -43,29 +110,37 @@ export default class CartScreen extends Component {
 								</TouchableOpacity>
 							</View>
 						</View>*/}
-						<Header leftIcon="chevron-left" navigation={this.props.navigation} title={strings.cart.title} rightIcon="ellipsis-h" />
 						<FlatList
-							data={this.state.item}
+							data={this.state.carts}
 							extraData={this.state}
 							keyExtractor={(item, index) => index.toString()}
 							renderItem={({item, index}) => (
-								<View style={styles.cartContainer}>
-									<View style={styles.leftContent}>
-										<Image style={styles.image} source={item.images.thumbnail} />
-										<View style={styles.textLayout}>
-											<Text style={styles.title}>{item.name}</Text>
-											<Text style={styles.price}>${item.price}</Text>
-											{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
+								<AppleStyleSwipeableRow id={item.id} carts={this.state.carts} navigation={this.props.navigation}>
+									<View>
+										<View style={styles.cartContainer}>
+											<View style={styles.leftContent}>
+												<Image style={styles.image} source={item.images.thumbnail} />
+												<View style={styles.textLayout}>
+													<Text style={styles.title}>{item.name}</Text>
+													<Text style={styles.price}>${item.price}</Text>
+													{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
+												</View>
+											</View>
+											<View style={styles.rightContent}>
+												<View style={styles.picker}>
+													<TouchableOpacity onPress={() => (this.downQty(item, index))}>
+														<FontAwesome5 name="minus" size={10} color={colors.primary} />		
+													</TouchableOpacity>
+													<Text style={styles.pickerText}>{item.qty}</Text>
+													<TouchableOpacity onPress={() => (this.upQty(item, index))}>
+														<FontAwesome5 name="plus" size={10} color={colors.primary} />		
+													</TouchableOpacity>
+												</View>
+											</View>
 										</View>
+										<View style={styles.line} opacity={0.5}></View>
 									</View>
-									<View style={styles.rightContent}>
-										<View style={styles.picker}>
-											<Text style={styles.pickerText}>1</Text>
-											<FontAwesome5 name="chevron-down" size={10} color={colors.primary} />
-										</View>
-									</View>
-								</View>
-								/*<View style={styles.line} opacity={0.5}></View>*/
+								</AppleStyleSwipeableRow>
 							)}
 						/>
 					</ScrollView>
@@ -76,7 +151,7 @@ export default class CartScreen extends Component {
 						<Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
 					</View>
 					<View style={styles.checkoutLayout}>
-						<TouchableOpacity>
+						<TouchableOpacity onPress={() => this.props.navigation.navigate('Shipping', {totalPrice})}>
 							<View style={styles.checkoutButton}>
 								<Text style={styles.checkoutText}>{strings.cart.checkout}</Text>
 							</View>
@@ -93,7 +168,10 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	top: {
-		flex: 8
+		flex: 1
+	},
+	middle: {
+		flex: 7
 	},
 	bottom: {
 		flex: 2,
@@ -145,7 +223,7 @@ const styles = StyleSheet.create({
 		color: colors.grey
 	},
 	picker: {
-		width: 40,
+		width: 50,
 		height: 20,
 		backgroundColor: colors.grey,
 		borderRadius: 100,
@@ -164,7 +242,6 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		backgroundColor: colors.grey,
 		marginTop: 10,
-		marginBottom: 10,
 		alignSelf: 'center'
 	},
 	totalLayout: {
@@ -177,7 +254,7 @@ const styles = StyleSheet.create({
 	},
 	totalText: {
 		fontFamily: fonts.regular,
-		fontSize: hp('2%'),
+		fontSize: hp('2.5%'),
 		color: colors.primary
 	},
 	totalPrice: {

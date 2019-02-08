@@ -9,6 +9,10 @@ import SavedScreen from './SavedScreen';
 import ProfileScreen from './ProfileScreen';
 import DetailScreen from './DetailScreen';
 import CartScreen from './CartScreen';
+import ShippingScreen from './ShippingScreen';
+import PaymentScreen from './PaymentScreen';
+import InvoiceScreen from './InvoiceScreen';
+import SuccessScreen from './SuccessScreen';
 
 import colors from 'res/colors';
 
@@ -54,8 +58,12 @@ const MainNavigator = createStackNavigator({
 			header: null
 		}
 	},
+	Cart: { screen: CartScreen },
 	Detail: { screen: DetailScreen },
-	Cart: { screen: CartScreen }
+	Shipping: { screen: ShippingScreen },
+	Payment: { screen: PaymentScreen },
+	Invoice: { screen: InvoiceScreen },
+	Success: { screen: SuccessScreen }
 }, {
 	headerMode: 'none'
 })

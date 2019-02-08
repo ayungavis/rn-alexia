@@ -21,6 +21,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 12,
+		
 		images: {
 			thumbnail: require('../images/products/1/thumbnail.png'),
 			one: require('../images/products/1/1.png'),
@@ -51,6 +52,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 34,
+		
 		images: {
 			thumbnail: require('../images/products/2/thumbnail.png'),
 			one: require('../images/products/2/1.png'),
@@ -81,6 +83,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 51,
+		
 		images: {
 			thumbnail: require('../images/products/3/thumbnail.png'),
 			one: require('../images/products/3/1.png'),
@@ -111,6 +114,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 53,
+		
 		images: {
 			thumbnail: require('../images/products/4/thumbnail.png'),
 			one: require('../images/products/4/1.png'),
@@ -141,6 +145,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 64,
+		
 		images: {
 			thumbnail: require('../images/products/5/thumbnail.png'),
 			one: require('../images/products/5/1.png'),
@@ -171,6 +176,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 18,
+		
 		images: {
 			thumbnail: require('../images/products/6/thumbnail.png'),
 			one: require('../images/products/6/1.png'),
@@ -201,6 +207,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 51,
+		
 		images: {
 			thumbnail: require('../images/products/7/thumbnail.png'),
 			one: require('../images/products/7/1.png'),
@@ -231,6 +238,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 18,
+		
 		images: {
 			thumbnail: require('../images/products/8/thumbnail.png'),
 			one: require('../images/products/8/1.png'),
@@ -261,6 +269,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 71,
+		
 		images: {
 			thumbnail: require('../images/products/9/thumbnail.png'),
 			one: require('../images/products/9/1.png'),
@@ -291,6 +300,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 72,
+		
 		images: {
 			thumbnail: require('../images/products/10/thumbnail.png'),
 			one: require('../images/products/10/1.png'),
@@ -321,6 +331,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 51,
+		
 		images: {
 			thumbnail: require('../images/products/11/thumbnail.png'),
 			one: require('../images/products/11/1.png'),
@@ -351,6 +362,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 85,
+		
 		images: {
 			thumbnail: require('../images/products/12/thumbnail.png'),
 			one: require('../images/products/12/1.png'),
@@ -381,6 +393,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 57,
+		
 		images: {
 			thumbnail: require('../images/products/13/thumbnail.png'),
 			one: require('../images/products/13/1.png'),
@@ -410,7 +423,8 @@ products = [
 		top: 0,
 		wishlist: 0,
 		cart: 0,
-		stock: 0,
+		stock: 12,
+		
 		images: {
 			thumbnail: require('../images/products/14/thumbnail.png'),
 			one: require('../images/products/14/1.png'),
@@ -441,6 +455,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 51,
+		
 		images: {
 			thumbnail: require('../images/products/15/thumbnail.png'),
 			one: require('../images/products/15/1.png'),
@@ -471,6 +486,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 41,
+		
 		images: {
 			thumbnail: require('../images/products/16/thumbnail.png'),
 			one: require('../images/products/16/1.png'),
@@ -501,6 +517,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 52,
+		
 		images: {
 			thumbnail: require('../images/products/17/thumbnail.png'),
 			one: require('../images/products/17/1.png'),
@@ -531,6 +548,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 61,
+		
 		images: {
 			thumbnail: require('../images/products/18/thumbnail.png'),
 			one: require('../images/products/18/1.png'),
@@ -561,6 +579,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 72,
+		
 		images: {
 			thumbnail: require('../images/products/19/thumbnail.png'),
 			one: require('../images/products/19/1.png'),
@@ -591,6 +610,7 @@ products = [
 		wishlist: 0,
 		cart: 0,
 		stock: 52,
+		
 		images: {
 			thumbnail: require('../images/products/20/thumbnail.png'),
 			one: require('../images/products/20/1.png'),

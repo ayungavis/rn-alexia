@@ -16,14 +16,59 @@ import 'res/data/cart';
 
 export default class DetailScreen extends Component {
 	constructor(props) {
-		super(props);
+		super(props)
+		const { item } = props.navigation.state.params;
 		this.state = {
-			products: this.props.navigation.getParam('item'),
+			id: item.id,
+			name: item.name,
+			lowname: item.lowname,
+			description: item.description,
+			category_id: item.category_id,
+			price: item.price,
+			ratings: item.ratings,
+			rating: {
+				one: item.rating.one,
+				two: item.rating.two,
+				three: item.rating.three,
+				four: item.rating.four,
+				five: item.rating.five
+			},
+			review: item.review,
+			newitem: item.new,
+			collection: item.collection,
+			top: item.top,
+			wishlist: item.wishlist,
+			cart: item.cart,
+			stock: item.stock,
+			images: {
+				thumbnail: item.images.thumbnail,
+				one: item.images.one,
+				two: item.images.two,
+				three: item.images.three,
+				four: item.images.four
+			},
+			qty: 1,
 			position: 1,
-			cart
 		}
 		this.addToCart = () => {
-			cart.push(this.state.products)
+			let exist = false
+			cart.map(data => {
+				if (data.id == this.state.id) {
+					exist = true
+				}
+			})
+			if (exist) {
+				cart.map(data => {
+					if (data.id == this.state.id) {
+						Object.assign(data, {
+							qty: data.qty + 1
+						})
+					}
+				})
+			} 
+			else {
+				cart.push(this.state)
+			}
 			this.props.navigation.navigate('Cart')
 		}
 	}
@@ -47,17 +92,17 @@ export default class DetailScreen extends Component {
 						height={hp('70%')}
 						onPositionChanged={position => this.setState({ position })}
 						dataSource={[
-							{ url: this.state.products.images.one },
-							{ url: this.state.products.images.two },
-							{ url: this.state.products.images.three },
-							{ url: this.state.products.images.four }
+							{ url: this.state.images.one },
+							{ url: this.state.images.two },
+							{ url: this.state.images.three },
+							{ url: this.state.images.four }
 						]}
 					/>
 					<View style={styles.headerLayout}>	
 						<View style={styles.titleLayout}>
-							<Text style={styles.title}>{this.state.products.name}</Text>
+							<Text style={styles.title}>{this.state.name}</Text>
 						</View>
-						<Text style={styles.price}>${this.state.products.price}</Text>
+						<Text style={styles.price}>${this.state.price}</Text>
 					</View>
 					<View style={styles.ratingLayout}>
 						<StarRating
@@ -68,13 +113,17 @@ export default class DetailScreen extends Component {
 					        iconSet={'Ionicons'}
 					        maxStars={5}
 					        starSize={20}
-					        rating={this.state.products.ratings}
+					        rating={this.state.ratings}
 					        selectedStar={(rating) => this.onStarRatingPress(rating)}
 					        fullStarColor={colors.stars}
 					        emptyStarColor={colors.grey}
 					        starStyle={styles.ratings}
 					    />
-						<Text style={styles.reviews}>{this.state.products.review} reviews</Text>
+						<Text style={styles.reviews}>{this.state.review} reviews</Text>
+					</View>
+					<View style={styles.descriptionLayout}>
+						<Text style={styles.descriptionTitle}>Description</Text>
+						<Text style={styles.descriptionContent}>{this.state.description}</Text>
 					</View>
 				</ScrollView>
 			</View>
@@ -166,6 +215,22 @@ const styles = StyleSheet.create({
 	ratings: {
 		flexDirection: 'row',
 		justifyContent: 'space-around'
+	},
+	descriptionLayout: {
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		margin: 20
+	},
+	descriptionTitle: {
+		fontFamily: fonts.bold,
+		fontSize: hp('3.5%'),
+		color: colors.primary,
+		marginBottom: 10
+	},
+	descriptionContent: {
+		fontFamily: fonts.regular,
+		fontSize: hp('2.5%'),
+		color: colors.primary
 	},
 	floatingButton: {
 		position: 'absolute',
