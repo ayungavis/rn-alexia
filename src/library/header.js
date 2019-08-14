@@ -10,11 +10,16 @@ import colors from 'res/colors';
 import images from 'res/images';
 
 export default class Header extends Component {
+	handleBack() {
+		this.props.navigation.state.params.onGoBack()
+		this.props.navigation.goBack()
+	}
+
 	render() {
 		return(
 			<View style={styles.header}>
 				<View style={styles.headerLeft}>
-					<TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+					<TouchableOpacity onPress={() => this.handleBack()}>
 						<FontAwesome5 name={this.props.leftIcon} size={15} color={colors.primary} />
 					</TouchableOpacity>
 				</View>

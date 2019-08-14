@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     top: 10,
     bottom: 0,
     left: 0,
-    marginRight: 20,
+    marginRight: 70,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
@@ -209,6 +209,14 @@ export default class Slideshow extends Component {
     clearInterval(this._interval);
   }
 
+  onScrollCustom = (e) =>{
+    let contentOffset = e.nativeEvent.contentOffset;
+    let viewSize = e.nativeEvent.layoutMeasurement;
+    let pageNum = Math.floor(contentOffset.x / viewSize.width);
+    console.log('New page ', pageNum);
+    this.setState({position: pageNum});
+  }
+
   render() {
     const width = this.state.width;
     const height = this.props.height || this.state.height;
@@ -221,6 +229,9 @@ export default class Slideshow extends Component {
         {/* SECTION IMAGE */}
         <ScrollView
           ref={ref => this._onRef(ref)}
+          pagingEnabled={true}
+          onScrollEndDrag={this.onScrollCustom}
+          onMomentumScrollEnd={this.onScrollCustom}
           decelerationRate={0.99}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -344,20 +355,20 @@ export default class Slideshow extends Component {
         </View>
         {/* END SECTION ARROW RIGHT */}
         {/* SECTION BACK */}
-        <View style={styles.layoutBack}>
+        {/*<View style={styles.layoutBack}>
           <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
             <View style={{ width: 30, height: 30, backgroundColor: 'transparent', borderRadius: 10}}>
               <FontAwesome5 name={'chevron-left'} size={25} color='white' light />
             </View>
           </TouchableOpacity>
-        </View>
+        </View>*/}
         {/* END SECTION BACK */}
         {/* SECTION WISHLIST */}
-        <View style={styles.layoutWishlist}>
+        {/*<View style={styles.layoutWishlist}>
           <TouchableOpacity>
             <FontAwesome5 name={'heart'} size={25} color='white' light />
           </TouchableOpacity>
-        </View>
+        </View>*/}
         {/* END SECTION WISHLIST */}
       </View>
     );

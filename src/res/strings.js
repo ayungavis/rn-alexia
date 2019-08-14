@@ -2,7 +2,8 @@ const strings = {
 	onboarding: {
 		welcome: {
 			title: 'ALEXIA',
-			button: 'Start Shopping'
+			button: 'Start Shopping',
+			login: 'Log In / Sign Up'
 		}
 	},
 	shop: {
@@ -21,7 +22,9 @@ const strings = {
 	cart: {
 		title: 'My Bag',
 		checkout: 'Checkout',
-		total: 'Total Amount'
+		total: 'Total Amount',
+		empty: 'Your bag is empty.',
+		emptyButton: 'Continue Shopping'
 	},
 	payment: {
 		title: 'Checkout',
@@ -30,6 +33,9 @@ const strings = {
 			payment: 'Payment',
 			invoice: 'Confirmation'
 		}
+	},
+	wishlist: {
+		title: 'Wish List'
 	}
 }
 

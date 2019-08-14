@@ -13,7 +13,9 @@ const images = {
 		seven: require('./images/products/7/thumbnail.png'),
 		eight: require('./images/products/8/thumbnail.png'),
 		nine: require('./images/products/9/thumbnail.png')
-	}
+	},
+	profile: require('./images/profile/profile.png'),
+	cover: require('./images/profile/cover.png')
 }
 
 export default images

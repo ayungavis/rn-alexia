@@ -23,6 +23,9 @@ export default class WelcomeScreen extends Component {
 					<Text style={styles.title}>{strings.onboarding.welcome.title}</Text>
 				</View>
 				<View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+					<TouchableOpacity style={styles.buttonLogin} onPress={() => navigate('Login')}>
+						<Icon name="ios-person" size={15} color={colors.primary} /><Text>  </Text><Text style={styles.textLogin}>{strings.onboarding.welcome.login}</Text>
+					</TouchableOpacity>
 					<TouchableOpacity style={styles.button} onPress={() => navigate('Shop')}>
 						<Icon name="ios-cart" size={15} color="white" /><Text>  </Text><Text style={styles.text}>{strings.onboarding.welcome.button}</Text>
 					</TouchableOpacity>
@@ -50,6 +53,16 @@ const styles = StyleSheet.create({
 		letterSpacing: 10,
 		marginTop: 100
 	},
+	buttonLogin: {
+		backgroundColor: 'white',
+		borderRadius: 50,
+		width: wp('75%'),
+		height: hp('7%'),
+		marginBottom: 10,
+		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'row'
+	},
 	button: {
 		backgroundColor: colors.primary,
 		borderRadius: 50,
@@ -61,8 +74,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	text: {
-		fontFamily: fonts.regular,
+		fontFamily: fonts.bold,
 		fontSize: hp('2.5%'),
 		color: 'white',
+	},
+	textLogin: {
+		fontFamily: fonts.bold,
+		fontSize: hp('2.5%'),
+		color: colors.primary,
 	},
 })

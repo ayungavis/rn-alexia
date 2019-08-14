@@ -1,96 +1,104 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar, Image } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar, Image, Alert } from 'react-native';
 import { Container, Text } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { FlatList, RectButton } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 import AppleStyleSwipeableRow from 'library/appleStyleSwipeableRow';
 import Header from 'library/header';
+import { getCart, updateCart, deleteCart } from 'library/redux/actions/orders';
 
 import fonts from 'res/fonts';
 import strings from 'res/strings';
 import colors from 'res/colors';
 import images from 'res/images';
+import server from 'res/server';
 
-import 'res/data/cart';
-
-class Row extends Component {
-	render() {
-		return(
-			<View>
-				<View style={styles.cartContainer}>
-					<View style={styles.leftContent}>
-						<Image style={styles.image} source={this.props.item.images.thumbnail} />
-						<View style={styles.textLayout}>
-							<Text style={styles.title}>{this.props.item.name}</Text>
-							<Text style={styles.price}>${this.props.item.price}</Text>
-							{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
-						</View>
-					</View>
-					<View style={styles.rightContent}>
-						<View style={styles.picker}>
-							<TouchableOpacity onPress={() => (this.downQty(this.props.item, this.props.index))}>
-								<FontAwesome5 name="minus" size={10} color={colors.primary} />		
-							</TouchableOpacity>
-							<Text style={styles.pickerText}>{this.props.item.qty}</Text>
-							<TouchableOpacity onPress={() => (this.upQty(this.props.item, this.props.index))}>
-								<FontAwesome5 name="plus" size={10} color={colors.primary} />		
-							</TouchableOpacity>
-						</View>
-					</View>
-				</View>
-				<View style={styles.line} opacity={0.5}></View>
-			</View>
-		)
-	}
-}
-
-const SwipeableRow = ({ item, index }) => {
-	return(
-		<AppleStyleSwipeableRow>
-			<Row item={item} index={index} />
-		</AppleStyleSwipeableRow>
-	)
-}
-
-export default class CartScreen extends Component {
+class CartScreen extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			carts: cart
-		}
 	}
 
-	downQty = (item, index) => {
-		const { carts } = this.state;
-		if(carts[index].qty == 1)  {
-			carts[index].qty = 1
+	decreaseQty = (item) => {
+		if(item.qty == 1)  {
+			item.qty = 1
 		}
 		else {
-			cart[index].qty -= 1
+			item.qty -= 1
 		}
-		this.setState({ cart })
+		const qty = item.qty
+		this.updateCart(item.id, qty)
 	}
 
-	upQty = (item, index) => {
-		const { carts } = this.state;
-		if (carts[index].qty == 9) {
-			carts[index].qty = 9
+	increaseQty = (item) => {
+		if (item.qty == 9) {
+			item.qty = 9
 		}
 		else {
-			carts[index].qty += 1	
+			item.qty += 1	
 		}
-		this.setState({ carts })
+		const qty = item.qty
+		this.updateCart(item.id, qty)
+	}
+
+	componentDidMount() {
+		this.getCart()
+	}
+
+	updateCart(id, qty) {
+		this.props.dispatch(updateCart(id, {
+			qty: qty
+		}))
+		// this.getCart()
+	}
+
+	getCart = () => {
+		this.props.dispatch(getCart())
+	}
+
+	deleteItem = (id) => () => {
+		this.props.dispatch(deleteCart(id))
+		this.getCart()
+	}
+
+	handleDelete = (id) => () => {
+		Alert.alert(
+			'Delete Product',
+			'Are you sure want to delete this product?',
+			[
+				{
+					text: 'No',
+					onPress: () => console.log('Cancel Pressed'),
+				},
+				{
+					text: 'Yes',
+					onPress: this.deleteItem(id)
+				},
+
+			]
+		)
+	}
+
+	handleShop() {
+		this.props.navigation.state.params.onGoBack()
+		this.props.navigation.navigate('Shop')
+	}
+
+	refresh() {
+	 	this.getCart()
 	}
 
 	render() {
 		console.disableYellowBox = true;
 		let totalPrice = 0
-		this.state.carts.forEach((item) => {
-			totalPrice += item.qty * item.price
- 		})
-
+		if (this.props.orders && this.props.orders.data) {
+			this.props.orders.data.forEach((item) => {
+				totalPrice += item.qty * item.price
+ 			})
+ 		}
 		return(
 			<Container style={styles.container}>
 				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={false} />
@@ -98,70 +106,86 @@ export default class CartScreen extends Component {
 					<Header leftIcon="chevron-left" navigation={this.props.navigation} title={strings.cart.title} rightIcon="ellipsis-h" />
 				</View>
 				<View style={styles.middle}>
-					<ScrollView showsVerticalScrollIndicator={false}>
-						{/*<View style={styles.header}>
-							<View style={styles.headerLeft}></View>
-							<View style={styles.headerCenter}>
-								<Text style={styles.title}>{strings.cart.title}</Text>
-							</View>
-							<View style={styles.headerRight}>
-								<TouchableOpacity>
-									<FontAwesome5 name="ellipsis-h" size={15} color={colors.primary} />
-								</TouchableOpacity>
-							</View>
-						</View>*/}
-						<FlatList
-							data={this.state.carts}
-							extraData={this.state}
-							keyExtractor={(item, index) => index.toString()}
-							renderItem={({item, index}) => (
-								<AppleStyleSwipeableRow id={item.id} carts={this.state.carts} navigation={this.props.navigation}>
-									<View>
-										<View style={styles.cartContainer}>
-											<View style={styles.leftContent}>
-												<Image style={styles.image} source={item.images.thumbnail} />
-												<View style={styles.textLayout}>
-													<Text style={styles.title}>{item.name}</Text>
-													<Text style={styles.price}>${item.price}</Text>
-													{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
+					{this.props.orders.length > 0 ?
+						<ScrollView showsVerticalScrollIndicator={false}>
+							<FlatList
+								data={this.props.orders.data}
+								keyExtractor={(item, index) => index.toString()}
+								refreshing={this.props.orders.isLoading}
+								renderItem={({item, index}) => (
+									<AppleStyleSwipeableRow id={item.id} carts={this.props.orders.data} navigation={this.props.navigation}>
+										<TouchableOpacity onLongPress={this.handleDelete(item.id)}>
+											<View style={styles.cartContainer}>
+												<View style={styles.leftContent}>
+													<Image style={styles.image} source={{ uri: server.image + '/' + item.product_id + '/' + item.products.thumbnail }} />
+													<View style={styles.textLayout}>
+														<Text style={styles.title}>{item.products.name}</Text>
+														<Text style={styles.price}>${item.price}</Text>
+														{/*<Text style={styles.other}>Size: M | Color: Grey</Text>*/}
+													</View>
+												</View>
+												<View style={styles.rightContent}>
+													<View style={styles.picker}>
+														<TouchableOpacity onPress={() => (this.decreaseQty(item))}>
+															<FontAwesome5 name="minus" size={10} color={colors.primary} />		
+														</TouchableOpacity>
+														<Text style={styles.pickerText}>{item.qty}</Text>
+														<TouchableOpacity onPress={() => (this.increaseQty(item))}>
+															<FontAwesome5 name="plus" size={10} color={colors.primary} />		
+														</TouchableOpacity>
+													</View>
 												</View>
 											</View>
-											<View style={styles.rightContent}>
-												<View style={styles.picker}>
-													<TouchableOpacity onPress={() => (this.downQty(item, index))}>
-														<FontAwesome5 name="minus" size={10} color={colors.primary} />		
-													</TouchableOpacity>
-													<Text style={styles.pickerText}>{item.qty}</Text>
-													<TouchableOpacity onPress={() => (this.upQty(item, index))}>
-														<FontAwesome5 name="plus" size={10} color={colors.primary} />		
-													</TouchableOpacity>
-												</View>
-											</View>
-										</View>
-										<View style={styles.line} opacity={0.5}></View>
-									</View>
-								</AppleStyleSwipeableRow>
-							)}
-						/>
-					</ScrollView>
+											<View style={styles.line} opacity={0.5}></View>
+										</TouchableOpacity>
+									</AppleStyleSwipeableRow>
+								)}
+							/>
+						</ScrollView>
+					:
+						<View style={styles.emptyLayout}>
+							<FontAwesome5 name="shopping-bag" size={80} color={colors.grey} />
+							<Text style={styles.emptyText}>{strings.cart.empty}</Text>
+						</View>
+					}
 				</View>
-				<View style={styles.bottom}>
-					<View style={styles.totalLayout}>
-						<Text style={styles.totalText}>{strings.cart.total}</Text>
-						<Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
+				{this.props.orders.length > 0 ?
+					<View style={styles.bottom}>
+						<View style={styles.totalLayout}>
+							<Text style={styles.totalText}>{strings.cart.total}</Text>
+							<Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
+						</View>
+						<View style={styles.checkoutLayout}>
+							<TouchableOpacity onPress={() => this.props.navigation.navigate('Shipping', { onGoBack: () => this.refresh() })}>
+								<View style={styles.checkoutButton}>
+									<Text style={styles.checkoutText}>{strings.cart.checkout}</Text>
+								</View>
+							</TouchableOpacity>
+						</View>
 					</View>
-					<View style={styles.checkoutLayout}>
-						<TouchableOpacity onPress={() => this.props.navigation.navigate('Shipping', {totalPrice})}>
-							<View style={styles.checkoutButton}>
-								<Text style={styles.checkoutText}>{strings.cart.checkout}</Text>
-							</View>
-						</TouchableOpacity>
+				:
+					<View style={styles.bottom}>
+						<View style={styles.emptyBottomLayout}>
+							<TouchableOpacity onPress={() => this.handleShop()}>
+								<View style={styles.checkoutButton}>
+									<Text style={styles.checkoutText}>{strings.cart.emptyButton}</Text>
+								</View>
+							</TouchableOpacity>
+						</View>	
 					</View>
-				</View>
+				}
 			</Container>
 		)
 	}
 }
+
+const mapStateToProps = (state) => {
+	return {
+		orders: state.orders
+	}
+}
+
+export default connect(mapStateToProps)(CartScreen)
 
 const styles = StyleSheet.create({
 	container: {
@@ -279,6 +303,7 @@ const styles = StyleSheet.create({
 		shadowColor: colors.primary,
 		shadowOffset: {width: 0, height: 5},
 		shadowOpacity: 0.8,
+		elevation: 10,
 		shadowRadius: 10,
 		marginBottom: 10
 	},
@@ -286,5 +311,23 @@ const styles = StyleSheet.create({
 		fontFamily: fonts.bold,
 		fontSize: hp('2.5%'),
 		color: 'white'
+	},
+	emptyLayout: {
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	emptyText: {
+		fontFamily: fonts.regular,
+		fontSize: hp('2.5%'),
+		color: colors.primary,
+		marginTop: 10
+	},
+	emptyBottomLayout: {
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'flex-end',
+		alignItems: 'center'
 	}
 })

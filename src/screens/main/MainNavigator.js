@@ -3,6 +3,8 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import AuthNavigator from '../auth/AuthNavigator';
+
 import ShopScreen from './ShopScreen';
 import ExploreScreen from './ExploreScreen';
 import SavedScreen from './SavedScreen';
@@ -22,7 +24,7 @@ const BottomNavigator = createMaterialBottomTabNavigator({
 	},
 	Explore: { screen: ExploreScreen },
 	Saved: { screen: SavedScreen },
-	Profile: { screen: ProfileScreen }
+	Profile: { screen: ProfileScreen },
 }, {
 	defaultNavigationOptions: ({ navigation }) => ({
 		tabBarIcon: ({ focused, horizontal, tintColor }) => {
@@ -63,7 +65,8 @@ const MainNavigator = createStackNavigator({
 	Shipping: { screen: ShippingScreen },
 	Payment: { screen: PaymentScreen },
 	Invoice: { screen: InvoiceScreen },
-	Success: { screen: SuccessScreen }
+	Success: { screen: SuccessScreen },
+	Login: { screen: AuthNavigator }
 }, {
 	headerMode: 'none'
 })

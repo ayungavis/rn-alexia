@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar } from 'react
 import { Container, Text, Form, Item, Label, Input, Picker } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 import Header from 'library/header';
 
@@ -10,6 +11,7 @@ import fonts from 'res/fonts';
 import strings from 'res/strings';
 import colors from 'res/colors';
 import images from 'res/images';
+import server from 'res/server';
 
 import 'res/data/shipping';
 import 'res/data/city';
@@ -18,29 +20,95 @@ import 'res/data/country';
 export default class ShippingScreen extends Component {
 	constructor(props) {
 		super(props)
-		const totalPrice = props.navigation.getParam('totalPrice')
+		// const totalPrice = props.navigation.getParam('totalPrice')
 		this.state = {
-			shippingMethod: '',
-			indexShipping: '',
+			selectedShipping: '',
 			selectedCity: '',
-			indexCity: '',
 			selectedCountry: '',
-			indexCountry: '',
 			fullName: '',
 			address: '',
 			zipCode: '',
-			totalPrice: totalPrice,
-			city: city,
-			country: country,
-			shipping: shipping
+			cities: [],
+			countries: [],
+			shippings: [],
+			carts: [],
+			totalPrice: 0,
+			stats: false
 		}
+	}
+
+	componentDidMount() {
+		this.getCart()
+		this.getCity()
+		this.getCountry()
+		this.getShipping()
+	}
+
+	getCity = () => {
+		axios({
+			method: 'get',
+			url: `${server.api}/cities`
+		})
+		.then(res => {
+			this.setState({
+				cities: res.data
+			})
+		})
+		.catch(err => {
+			console.log(err)
+		})
+	}
+
+	getCountry = () => {
+		axios({
+			method: 'get',
+			url: `${server.api}/countries`
+		})
+		.then(res => {
+			this.setState({
+				countries: res.data
+			})
+		})
+		.catch(err => {
+			console.log(err)
+		})
+	}
+
+	getShipping = () => {
+		axios({
+			method: 'get',
+			url: `${server.api}/shippings`
+		})
+		.then(res => {
+			this.setState({
+				shippings: res.data
+			})
+		})
+		.catch(err => {
+			console.log(err)
+		})
+	}
+
+	getCart = () => {
+		axios({
+			method: 'get',
+			url: `${server.api}/orders`
+		})
+		.then(res => {
+			this.setState({
+				carts: res.data
+			})
+		})
+		.catch(err => {
+			console.log(err)
+		})
 	}
 
 	renderShipping() {
 		let items = [<Picker.Item key='0' label='Select Shipping Method' value='0' />];
-		this.state.shipping.forEach((item) => {
+		this.state.shippings.forEach((item) => {
 			items.push(
-				<Picker.Item key={item.id} label={item.name} value={item.cost} />
+				<Picker.Item key={item.id} label={`${item.name} (+ $${item.cost})`} value={item.cost} />
 			)
 		})
 		return items
@@ -48,7 +116,7 @@ export default class ShippingScreen extends Component {
 
 	renderCountry() {
 		let items = [<Picker.Item key='0' label='Select Country' value='0' />];
-		this.state.country.forEach((item) => {
+		this.state.countries.forEach((item) => {
 			items.push(
 				<Picker.Item key={item.id} label={item.name} value={item.id} />
 			)
@@ -58,7 +126,7 @@ export default class ShippingScreen extends Component {
 
 	renderCity() {
 		let items = [<Picker.Item key='0' label='Select City' value='0' />];
-		this.state.city.forEach((item) => {
+		this.state.cities.forEach((item) => {
 			items.push(
 				<Picker.Item key={item.id} label={item.name} value={item.id} />
 			)
@@ -66,8 +134,40 @@ export default class ShippingScreen extends Component {
 		return items
 	}
 
+	handleSubmit = (totalPrice) => () => {
+		// this.setState({
+		//   	totalPrice: totalPrice,
+		// })
+		this.props.navigation.navigate('Payment', {checkout: this.state, onGoBack: () => this.refresh()})
+	}
+
+	refresh() {
+
+	}
+
+	require() {
+		if (this.state.selectedShipping != '0' && this.state.fullName != '' && this.state.address != '' && this.state.zipCode != '' && this.state.selectedCountry != '' && this.state.selectedCity != '') {
+			return false
+		}
+		else return true
+	}
+
+	styleRequire() {
+		if (this.state.selectedShipping != '0' && this.state.fullName != '' && this.state.address != '' && this.state.zipCode != '' && this.state.selectedCountry != '' && this.state.selectedCity != '') {
+			return styles.bottomButton
+		}
+		else return styles.bottomButtonDisabled
+	}
+
 	render() {
 		/*const totalPrice = this.props.navigation.getParam('totalPrice')*/
+		let totalPrice = 0
+		this.state.carts.forEach((item) => {
+			totalPrice += item.qty * item.price
+ 		})
+ 		if(this.state.selectedShipping) {
+ 			totalPrice = totalPrice + parseInt(this.state.selectedShipping) 
+ 		}
 		return(
 			<Container style={styles.container}>
 				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={false} />
@@ -100,6 +200,20 @@ export default class ShippingScreen extends Component {
 										<Label style={styles.label}>Address</Label>
 										<Input style={styles.input} onChangeText={(text) => this.setState({ address: text })} />
 									</Item>
+									<Label style={styles.labelText}>Country</Label>
+									<Item>
+										<Picker
+											mode="dropdown"
+											iosIcon={<Icon name="ios-arrow-dropdown" />}
+											placeholder="Select Country"
+											placeholderStyle={styles.pickerPlaceholder}
+											placeholderIconColor={colors.primary}
+											selectedValue={this.state.selectedCountry}
+											onValueChange={(itemValue, itemIndex) => this.setState({ selectedCountry: itemValue })}
+										>
+											{this.renderCountry()}
+										</Picker>
+									</Item>
 									<View style={styles.row}>
 										<View style={styles.left}>
 											<Label style={styles.labelText}>City</Label>
@@ -112,7 +226,7 @@ export default class ShippingScreen extends Component {
 													placeholderStyle={styles.pickerPlaceholder}
 													placeholderIconColor={colors.primary}
 													selectedValue={this.state.selectedCity}
-													onValueChange={(itemValue, itemIndex) => this.setState({ selectedCity: itemValue, indexCity: itemIndex })}
+													onValueChange={(itemValue, itemIndex) => this.setState({ selectedCity: itemValue })}
 												>
 													{this.renderCity()}
 												</Picker>
@@ -125,20 +239,6 @@ export default class ShippingScreen extends Component {
 											</Item>
 										</View>
 									</View>
-									<Label style={styles.labelText}>Country</Label>
-									<Item>
-										<Picker
-											mode="dropdown"
-											iosIcon={<Icon name="ios-arrow-dropdown" />}
-											placeholder="Select Country"
-											placeholderStyle={styles.pickerPlaceholder}
-											placeholderIconColor={colors.primary}
-											selectedValue={this.state.selectedCountry}
-											onValueChange={(itemValue, itemIndex) => this.setState({ selectedCountry: itemValue, indexCountry: itemIndex })}
-										>
-											{this.renderCountry()}
-										</Picker>
-									</Item>
 									<Label style={styles.labelText}>Shipping Method</Label>
 									<Item>
 										<Picker
@@ -147,8 +247,8 @@ export default class ShippingScreen extends Component {
 											placeholder="Select Shipping Method"
 											placeholderStyle={styles.pickerPlaceholder}
 											placeholderIconColor={colors.primary}
-											selectedValue={this.state.shippingMethod}
-											onValueChange={(itemValue, itemIndex) => this.setState({ shippingMethod: itemValue, indexShipping: itemIndex })}
+											selectedValue={this.state.selectedShipping}
+											onValueChange={(itemValue, itemIndex) => this.setState({ selectedShipping: itemValue })}
 										>
 											{this.renderShipping()}
 										</Picker>
@@ -159,11 +259,17 @@ export default class ShippingScreen extends Component {
 					</ScrollView>
 				</View>
 				<View style={styles.bottom}>
-					<TouchableOpacity onPress={() => this.props.navigation.navigate('Payment', {payment: this.state})}>
-						<View style={styles.bottomButton}>
-							<Text style={styles.bottomButtonText}>Continue</Text>
-						</View>
-					</TouchableOpacity>
+					<View style={styles.totalLayout}>
+						<Text style={styles.totalText}>{strings.cart.total}</Text>
+						<Text style={styles.totalPrice}>${totalPrice.toFixed(2)}</Text>
+					</View>
+					<View style={styles.checkoutLayout}>
+						<TouchableOpacity onPress={this.handleSubmit(totalPrice)} disabled={this.require()}>
+							<View style={this.styleRequire()}>
+								<Text style={styles.bottomButtonText}>Continue</Text>
+							</View>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</Container>
 		)
@@ -180,15 +286,13 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	middle: {
-		flex: 8,
+		flex: 7,
 		width: wp('100%'),
-		height: hp('100%')
+		height: hp('100%'),
 	},
 	bottom: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: 'transparent'
+		flex: 2,
+		backgroundColor: colors.lightgrey
 	},
 	indicatorLayout: {
 		flexDirection: 'row',
@@ -275,8 +379,46 @@ const styles = StyleSheet.create({
 		fontSize: hp('3%'),
 		color: colors.primary
 	},
+	totalLayout: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginLeft: 30,
+		marginRight: 30
+	},
+	totalText: {
+		fontFamily: fonts.regular,
+		fontSize: hp('2.5%'),
+		color: colors.primary
+	},
+	totalPrice: {
+		fontFamily: fonts.bold,
+		fontSize: hp('3%'),
+		color: colors.primary
+	},
+	checkoutLayout: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
 	bottomButton: {
 		backgroundColor: colors.primary,
+		borderRadius: 50,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: wp('75%'),
+		height: hp('7%'),
+		shadowColor: colors.primary,
+		shadowOffset: {width: 0, height: 5},
+		shadowOpacity: 0.8,
+		shadowRadius: 10,
+		marginBottom: 10
+	},
+	bottomButtonDisabled: {
+		backgroundColor: colors.grey,
 		borderRadius: 50,
 		flexDirection: 'row',
 		justifyContent: 'center',

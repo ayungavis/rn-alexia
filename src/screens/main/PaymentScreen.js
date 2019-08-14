@@ -4,6 +4,7 @@ import { Container, Text, Form, Item, Label, Input, Picker } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+import axios from 'axios';
 
 import Header from 'library/header';
 
@@ -11,17 +12,72 @@ import fonts from 'res/fonts';
 import strings from 'res/strings';
 import colors from 'res/colors';
 import images from 'res/images';
+import server from 'res/server';
 
 export default class ShippingScreen extends Component {
 	constructor(props) {
 		super(props)
+		const checkout = props.navigation.getParam('checkout')
+		this.state = {
+			checkout: checkout,
+			carts: [],
+			valid_cc: ''
+		}
 	}
 
-	_onChange = form => console.log(form);
+	componentDidMount() {
+		this.getCart()
+	}
+
+	getCart = () => {
+		axios({
+			method: 'get',
+			url: `${server.api}/orders`
+		})
+		.then(res => {
+			this.setState({
+				carts: res.data
+			})
+		})
+		.catch(err => {
+			console.log(err)
+		})
+	}
+
+	_onChange = (form) => {
+		this.setState({
+			valid_cc: form
+		})
+	}
+
+	require() {
+		if (this.state.valid_cc.valid) {
+			return false
+		}
+		else return true
+	}
+
+	styleRequire() {
+		if (this.state.valid_cc.valid) {
+			return styles.bottomButton
+		}
+		else return styles.bottomButtonDisabled
+	}
+
+	refresh() {
+		
+	}
 
 	render() {
-		const { payment } = this.props.navigation.state.params
-		let price = payment.totalPrice + payment.shippingMethod
+		// const { payment } = this.props.navigation.state.params
+		// let price = payment.totalPrice + payment.shippingMethod
+		let totalPrice = 0
+		this.state.carts.forEach((item) => {
+			totalPrice += item.qty * item.price
+ 		})
+ 		if(this.state.checkout.selectedShipping) {
+ 			totalPrice = totalPrice + parseInt(this.state.checkout.selectedShipping) 
+ 		}
 		return(
 			<Container style={styles.container}>
 				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={false} />
@@ -51,9 +107,9 @@ export default class ShippingScreen extends Component {
 					</ScrollView>
 				</View>
 				<View style={styles.bottom}>
-					<TouchableOpacity onPress={() => this.props.navigation.navigate('Success')}>
-						<View style={styles.bottomButton}>
-							<Text style={styles.bottomButtonText}>Pay ${price}</Text>
+					<TouchableOpacity onPress={() => this.props.navigation.navigate('Success', { onGoBack: () => this.refresh()})} disabled={this.require()}>
+						<View style={this.styleRequire()}>
+							<Text style={styles.bottomButtonText}>Pay ${totalPrice.toFixed(2)}</Text>
 						</View>
 					</TouchableOpacity>
 				</View>
@@ -130,6 +186,20 @@ const styles = StyleSheet.create({
 	},
 	bottomButton: {
 		backgroundColor: colors.primary,
+		borderRadius: 50,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: wp('75%'),
+		height: hp('7%'),
+		shadowColor: colors.primary,
+		shadowOffset: {width: 0, height: 5},
+		shadowOpacity: 0.8,
+		shadowRadius: 10,
+		marginBottom: 10
+	},
+	bottomButtonDisabled: {
+		backgroundColor: colors.grey,
 		borderRadius: 50,
 		flexDirection: 'row',
 		justifyContent: 'center',

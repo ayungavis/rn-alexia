@@ -1,202 +1,150 @@
-import React, { Component } from 'react'
-import { AppRegistry, StyleSheet, View, Text } from 'react-native'
-import { ViewPager } from 'rn-viewpager'
+import React, { Component } from 'react';
+import { StyleSheet, View, StatusBar, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Container, Text } from 'native-base';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { connect } from 'react-redux';
 
-import StepIndicator from 'react-native-step-indicator'
-import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
+import Header from 'library/header';
 
-const PAGES = ['Page 1', 'Page 2', 'Page 3', 'Page 4', 'Page 5']
+import fonts from 'res/fonts';
+import strings from 'res/strings';
+import colors from 'res/colors';
+import images from 'res/images';
 
-const firstIndicatorStyles = {
-  stepIndicatorSize: 30,
-  currentStepIndicatorSize: 40,
-  separatorStrokeWidth: 3,
-  currentStepStrokeWidth: 5,
-  separatorFinishedColor: '#4aae4f',
-  separatorUnFinishedColor: '#a4d4a5',
-  stepIndicatorFinishedColor: '#4aae4f',
-  stepIndicatorUnFinishedColor: '#a4d4a5',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 15,
-  currentStepIndicatorLabelFontSize: 15,
-  stepIndicatorLabelCurrentColor: '#000000',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: 'rgba(255,255,255,0.5)',
-  labelColor: '#666666',
-  labelSize: 12,
-  currentStepLabelColor: '#4aae4f'
-}
-
-const secondIndicatorStyles = {
-  stepIndicatorSize: 30,
-  currentStepIndicatorSize: 40,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#fe7013',
-  stepStrokeWidth: 3,
-  separatorStrokeFinishedWidth: 4,
-  stepStrokeFinishedColor: '#fe7013',
-  stepStrokeUnFinishedColor: '#aaaaaa',
-  separatorFinishedColor: '#fe7013',
-  separatorUnFinishedColor: '#aaaaaa',
-  stepIndicatorFinishedColor: '#fe7013',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: '#fe7013',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-  labelColor: '#999999',
-  labelSize: 13,
-  currentStepLabelColor: '#fe7013'
-}
-
-const thirdIndicatorStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize: 30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#7eaec4',
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#7eaec4',
-  stepStrokeUnFinishedColor: '#dedede',
-  separatorFinishedColor: '#7eaec4',
-  separatorUnFinishedColor: '#dedede',
-  stepIndicatorFinishedColor: '#7eaec4',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 0,
-  currentStepIndicatorLabelFontSize: 0,
-  stepIndicatorLabelCurrentColor: 'transparent',
-  stepIndicatorLabelFinishedColor: 'transparent',
-  stepIndicatorLabelUnFinishedColor: 'transparent',
-  labelColor: '#999999',
-  labelSize: 13,
-  currentStepLabelColor: '#7eaec4'
-}
-
-const getStepIndicatorIconConfig = ({ position, stepStatus }) => {
-  const iconConfig = {
-    name: 'feed',
-    color: stepStatus === 'finished' ? '#ffffff' : '#fe7013',
-    size: 15
-  }
-  switch (position) {
-    case 0: {
-      iconConfig.name = 'shopping-cart'
-      break
-    }
-    case 1: {
-      iconConfig.name = 'location-on'
-      break
-    }
-    case 2: {
-      iconConfig.name = 'assessment'
-      break
-    }
-    case 3: {
-      iconConfig.name = 'payment'
-      break
-    }
-    case 4: {
-      iconConfig.name = 'track-changes'
-      break
-    }
-    default: {
-      break
-    }
-  }
-  return iconConfig
-}
-
-export default class App extends Component {
-  constructor () {
-    super()
-    this.state = {
-      currentPage: 0
-    }
-  }
-
-  componentWillReceiveProps (nextProps, nextState) {
-    if (nextState.currentPage != this.state.currentPage) {
-      if (this.viewPager) {
-        this.viewPager.setPage(nextState.currentPage)
-      }
-    }
-  }
-
-  render () {
-    return (
-      <View style={styles.container}>
-        <View style={styles.stepIndicator}>
-          <StepIndicator
-            customStyles={firstIndicatorStyles}
-            currentPosition={this.state.currentPage}
-            labels={['Account', 'Profile', 'Band', 'Membership', 'Dashboard']}
-          />
-        </View>
-        <View style={styles.stepIndicator}>
-          <StepIndicator
-            renderStepIndicator={this.renderStepIndicator}
-            customStyles={secondIndicatorStyles}
-            currentPosition={this.state.currentPage}
-            labels={[
-              'Cart',
-              'Delivery Address',
-              'Order Summary',
-              'Payment Method',
-              'Track'
-            ]}
-          />
-        </View>
-        <View style={styles.stepIndicator}>
-          <StepIndicator
-            stepCount={4}
-            customStyles={thirdIndicatorStyles}
-            currentPosition={this.state.currentPage}
-            labels={['Approval', 'Processing', 'Shipping', 'Delivery']}
-          />
-        </View>
-        <ViewPager
-          style={{ flexGrow: 1 }}
-          ref={viewPager => {
-            this.viewPager = viewPager
-          }}
-          onPageSelected={page => {
-            this.setState({ currentPage: page.position })
-          }}
-        >
-          {PAGES.map(page => this.renderViewPagerPage(page))}
-        </ViewPager>
-      </View>
-    )
-  }
-
-  renderViewPagerPage = data => {
-    return (
-      <View style={styles.page}>
-        <Text>{data}</Text>
-      </View>
-    )
-  }
-
-  renderStepIndicator = params => (
-    <MaterialIcon {...getStepIndicatorIconConfig(params)} />
-  )
+export default class SavedScreen extends Component {
+	render() {
+		return(
+			<Container style={styles.container}>
+				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={true} />
+				<View style={styles.top}>
+					<Header navigation="" title={strings.wishlist.title} rightIcon="ellipsis-h" />
+				</View>
+				<View style={styles.middle}>
+					<View style={styles.filterLayout}>
+						<Text style={styles.filterText}>63 items found</Text>
+						<TouchableOpacity>
+							<FontAwesome5 name="sliders-h" size={15} color={colors.primary} /> 
+						</TouchableOpacity>
+					</View>
+					<ScrollView showVerticalScrollIndicator={false}>
+						<View style={styles.contentLayout}>
+							<View style={styles.contentLeft}>
+								{/*<Image style={styles.thumbnail} />*/}
+								<View style={styles.thumbnail}></View>
+							</View>
+							<View style={styles.contentRight}>
+								<View style={styles.contentText}>
+									<Text style={styles.contentTitle}>Fold Knitted Sweater</Text>
+									<Text style={styles.contentPrice}>$49.99</Text>
+								</View>
+								<View style={styles.contentButton}>
+									<TouchableOpacity>
+										<View style={styles.button} >
+											<Text style={styles.buttonText}>Move to Bag</Text>
+										</View>
+									</TouchableOpacity>
+								</View>
+							</View>
+						</View>
+						<View style={styles.line} opacity={0.5}></View>
+					</ScrollView>
+				</View>
+			</Container>
+		)
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff'
-  },
-  stepIndicator: {
-    marginVertical: 50
-  },
-  page: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
+	container: {
+		flex: 1
+	},
+	top: {
+		flex: 1,
+		marginTop: 20
+	},
+	middle: {
+		flex: 9
+	},
+	filterLayout: {
+		marginLeft: 20,
+		marginRight: 20,
+		marginBottom: 15,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+	filterText: {
+		fontFamily: fonts.regular,
+		fontSize: hp('2%'),
+		color: colors.grey
+	},
+	contentLayout: {
+		marginLeft: 20,
+		marginRight: 20,
+		marginBottom: 15,
+		flexDirection: 'row',
+		justifyContent: 'flex-start',
+		alignItems: 'center'
+	},
+	contentLeft: {
+		marginRight: 15
+	},
+	contentRight: {
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		alignItems: 'flex-start',
+		height: 70,
+		width: wp('60%')
+	},
+	thumbnail: {
+		width: 70,
+		height: 70,
+		backgroundColor: 'grey',
+		borderRadius: 5
+	},
+	contentText: {
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		marginRight: 20
+	},
+	contentTitle: {
+		fontFamily: fonts.bold,
+		fontSize: hp('2.5%'),
+		color: colors.primary
+	},
+	contentPrice: {
+		fontFamily: fonts.bold,
+		fontSize: hp('2%'),
+		color: colors.primary
+	},
+	contentButton: {
+		justifyContent: 'flex-end',
+		alignItems: 'flex-start'
+	},
+	button: {
+		backgroundColor: 'white',
+		borderColor: colors.blue,
+		borderRadius: 50,
+		borderWidth: 1.5,
+		borderRadius: 100,
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: wp('23%'),
+		height: hp('3.5%'),
+	},
+	buttonText: {
+		fontFamily: fonts.semibold,
+		fontSize: hp('2%'),
+		color: colors.blue
+	},
+	line: {
+		width: wp('90%'),
+		height: hp('0.3%'),
+		borderRadius: 100,
+		backgroundColor: colors.grey,
+		marginBottom: 15,
+		alignSelf: 'center'
+	}
 })

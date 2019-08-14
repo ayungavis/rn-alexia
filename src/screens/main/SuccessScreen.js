@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
-import { Container, Text, Form, Item, Label, Input, Picker } from 'native-base';
+import { Container, Text } from 'native-base';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 import Header from 'library/header';
 
@@ -11,10 +12,26 @@ import fonts from 'res/fonts';
 import strings from 'res/strings';
 import colors from 'res/colors';
 import images from 'res/images';
+import server from 'res/server';
+
+import 'res/data/cart';
 
 export default class ShippingScreen extends Component {
 	constructor(props) {
 		super(props)
+	}
+
+	handleSubmit() {
+		axios({
+			method: 'delete',
+			url: `${server.api}/orders`
+		})
+		.then(res => {
+			this.props.navigation.navigate('Shop', { onGoBack: () => this.refresh() })
+		})
+		.catch(err => {
+			console.log(err)
+		})
 	}
 
 	render() {
@@ -22,7 +39,7 @@ export default class ShippingScreen extends Component {
 			<Container style={styles.container}>
 				<StatusBar backgroundColor={'white'} barStyle="dark-content" translucent={false} />
 				<View style={styles.top}>
-					<Header leftIcon="chevron-left" navigation={this.props.navigation} title={strings.payment.title} rightIcon="ellipsis-h" />
+					<Header leftIcon="" navigation={this.props.navigation} title={strings.payment.title} rightIcon="ellipsis-h" />
 				</View>
 				<View style={styles.middle}>
 					<View style={styles.indicatorLayout}>
@@ -49,7 +66,7 @@ export default class ShippingScreen extends Component {
 					</View>
 				</View>
 				<View style={styles.bottom}>
-					<TouchableOpacity onPress={() => this.props.navigation.navigate('Shop')}>
+					<TouchableOpacity onPress={() => this.handleSubmit()}>
 						<View style={styles.bottomButton}>
 							<Text style={styles.bottomButtonText}>Continue Shopping</Text>
 						</View>
@@ -122,6 +139,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
+		width: wp('80%')
 	},
 	title: {
 		fontFamily: fonts.bold,
@@ -132,7 +150,8 @@ const styles = StyleSheet.create({
 	subtitle: {
 		fontFamily: fonts.regular,
 		fontSize: hp('2.5%'),
-		color: colors.primary
+		color: colors.primary,
+		textAlign: 'center'
 	},
 	circle: {
 		width: 120,

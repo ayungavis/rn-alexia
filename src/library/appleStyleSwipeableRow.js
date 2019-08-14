@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
-
+import { Animated, StyleSheet, Text, View, Alert } from 'react-native';
+import axios from 'axios';
 import { RectButton } from 'react-native-gesture-handler';
-
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { connect } from 'react-redux';
 
-export default class AppleStyleSwipeableRow extends Component {
+import { getCart, deleteCart } from 'library/redux/actions/orders';
+
+import server from 'res/server';
+
+const success = false;
+
+class AppleStyleSwipeableRow extends Component {
   renderLeftActions = (progress, dragX) => {
     const trans = dragX.interpolate({
       inputRange: [0, 50, 100, 101],
@@ -32,7 +38,9 @@ export default class AppleStyleSwipeableRow extends Component {
     });
     const pressHandler = (id, carts) => () => {
       /*var { cartItem } = carts*/
-      var cartIndex = carts.indexOf(id)
+      this.deleteItem(id)
+      this.close()
+      var cartIndex = carts.findIndex(i => i.id === id)
       carts.splice(cartIndex, 1);
       this.props.navigation.navigate('Cart', {
         onBack: () => this.refresh()
@@ -61,6 +69,11 @@ export default class AppleStyleSwipeableRow extends Component {
   close = () => {
     this._swipeableRow.close();
   };
+
+  deleteItem = (id) => {
+    this.props.dispatch(deleteCart(id));
+  }
+
   render() {
     const { children } = this.props;
     return (
@@ -76,6 +89,14 @@ export default class AppleStyleSwipeableRow extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    orders: state.orders
+  }
+}
+
+export default connect(mapStateToProps)(AppleStyleSwipeableRow)
 
 const styles = StyleSheet.create({
   leftAction: {
