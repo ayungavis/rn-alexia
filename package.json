@@ -14,7 +14,7 @@
     "native-base": "^2.12.0",
     "prop-types": "^15.6.2",
     "react": "16.6.3",
-    "react-native": "^0.58.5",
+    "react-native": "^0.70.4",
     "react-native-awesome-alerts": "^1.2.0",
     "react-native-collapsible": "^1.4.0",
     "react-native-credit-card-input": "^0.4.1",
